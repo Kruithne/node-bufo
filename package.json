@@ -1,0 +1,26 @@
+{
+  "name": "bufo",
+  "version": "1.0.0",
+  "description": "Buffer utility for Node v6+",
+  "main": "bufo.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kruithne/node-bufo.git"
+  },
+  "keywords": [
+    "buffer",
+    "reader",
+    "stream",
+    "bufo",
+    "binary"
+  ],
+  "author": "Kruithne <kruithne@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kruithne/node-bufo/issues"
+  },
+  "homepage": "https://github.com/Kruithne/node-bufo#readme"
+}
