@@ -310,7 +310,7 @@ class Bufo {
 	/**
 	 * Write a string to the buffer.
 	 * @param {string} str
-	 * @param {number} [prefix] If true, will prefix with string length.
+	 * @param {boolean} [prefix] If true, will prefix with string length.
 	 */
 	writeString(str, prefix) {
 		let out = [];
