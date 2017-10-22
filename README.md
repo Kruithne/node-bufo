@@ -35,6 +35,7 @@ Static constant representing the big-endian byte-order. Can be provided to the c
 
 ### `Bufo.create(size, safe, endian)`
 Allocate a new buffer wrapped inside a Bufo instance.
+
 Parameter | Type | Info
 --------- | ---- | ----
 size | `number` | Size of the buffer to allocate.
@@ -43,6 +44,7 @@ endian *(optional)* | `number` | Default endian to use. (Defaults to Bufo.ENDIAN
 
 ### `new Bufo(buffer, defaultEncoding)`
 Create a new Bufo instance, wrapping the given input. How the input is handled depends on the type, check the table below.
+
 | Type | Action |
 | ---- | ------ |
 | Buffer | Buffer will be wrapped by the Bufo instance. |
@@ -79,30 +81,35 @@ endian | `number` | `Bufo.ENDIAN_LITTLE` or `Bufo.ENDIAN_BIG`
 
 ### `seek(offset)`
 Set the absolute offset of this instance. If a negative value is provided, the offset will be set to that many bytes from the end of the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 offset | `number` | Absolute offset to set.
 
 ### `move(offset)`
 Set the offset relative to the current offset. Positive values will move the offset forward, negative values will move it backward. This does not wrap-around and will throw an error if you shift out of bounds.
+
 Parameter | Type | Info
 --------- | ---- | ----
 offset | `number` | Amount to shift the offset by.
 
 ### `readInt8(count)`
 Read one or more signed 8-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
 
 ### `readUInt8(count)`
 Read one or more unsigned 8-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
 
 ### `readInt16(count, endian)`
 Read one or more signed 16-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
@@ -110,6 +117,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `readIntU16(count, endian)`
 Read one or more unsigned 16-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
@@ -117,6 +125,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `readInt32(count, endian)`
 Read one or more signed 32-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
@@ -124,6 +133,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `readIntU32(count, endian)`
 Read one or more unsigned 32-bit integers from the buffer. If `count` is greater than one, an `Array` will be returned, otherwise the result will be a single `number` value.
+
 Parameter | Type | Info
 --------- | ---- | ----
 count *(optional)* | `number` | How many integers to read. Defaults to 1.
@@ -131,18 +141,21 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `readString(length)`
 Read a string from the buffer. If `length` is omitted, a single `UInt32` will be read first and used as the length.
+
 Parameter | Type | Info
 --------- | ---- | ----
 length *(optional)* | `number` | Length of the string to read.
 
 ### `readUTF8String(length)`
 Read a UTF8 encoded string from the buffer. If `length` is omitted, a single `UInt32` will be read first and used as the length.
+
 Parameter | Type | Info
 --------- | ---- | ----
 length *(optional)* | `number` | Length of the string to read.
 
 ### `readBuffer(length)`
 Reads `length` bytes from the buffer, writes them to a newly allocated buffer, and returns it. If `length` is omitted, `remainingBytes` will be used.
+
 Parameter | Type | Info
 --------- | ---- | ----
 length *(optional)* | `number` | How many bytes to read.
@@ -152,18 +165,21 @@ Reads and returns a buffer, wrapped in a new Bufo instance. Check `readBuffer` d
 
 ### `writeInt8(input)`
 Write one or more signed 8-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
 
 ### `writeUInt8(input)`
 Write one or more unsigned 8-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
 
 ### `writeInt16(input, endian)`
 Write one or more signed 16-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
@@ -171,6 +187,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeUInt16(input, endian)`
 Write one or more unsigned 16-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
@@ -178,6 +195,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeInt32(input, endian)`
 Write one or more signed 32-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
@@ -185,6 +203,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeUInt32(input, endian)`
 Write one or more unsigned 32-bit integers to the buffer.
+
 Parameter | Type | Info
 --------- | ---- | ----
 input | `number|Array` | Values to be written.
@@ -192,6 +211,7 @@ endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeString(str, prefix)`
 Write a string to the buffer with each character as a seperate byte. If `prefix` is true, the byte-length will be written as a `UInt32` first.
+
 Parameter | Type | Info
 --------- | ---- | ----
 str | `string` | String to write to the buffer.
@@ -199,6 +219,7 @@ prefix | `boolean` | If set, length-prefixes the string.
 
 ### `writeUTF8String(str, prefix)`
 Writes a UTF8 string to the buffer. If `prefix` is true, the byte-length will be written as a `UInt32` first.
+
 Parameter | Type | Info
 --------- | ---- | ----
 str | `string` | String to write to the buffer.
@@ -206,6 +227,7 @@ prefix | `boolean` | If set, length-prefixes the string.
 
 ### `writeBuffer(buffer, offset, count)`
 Writes a buffer (or Bufo instance) to the buffer. If `offset` is omitted, it will default to `0` for buffers and `bufo.offset` for a Bufo instance. If `count` is omitted, it will default to `buffer.length` for buffers and `bufo.remainingBytes` for a Bufo instance.
+
 Parameter | Type | Info
 --------- | ---- | ----
 buffer | `Buffer|Bufo` | Buffer to read from.
