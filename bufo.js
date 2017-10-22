@@ -190,7 +190,7 @@ class Bufo {
 	/**
 	 * Read a string from the buffer.
 	 * If length is omitted, will read a UInt32 as the length.
-	 * @param {number} [length] Byte-length of the string.
+	 * @param {number|null} [length] Byte-length of the string.
 	 * @returns {string}
 	 */
 	readString(length) {
@@ -210,7 +210,7 @@ class Bufo {
 	/**
 	 * Read a UTF8 string from the buffer.
 	 * If length is omitted, will read a UInt32 as the length.
-	 * @param {number} [length] Byte-length of the string.
+	 * @param {number|null} [length] Byte-length of the string.
 	 * @returns {string}
 	 */
 	readUTF8String(length) {
@@ -249,7 +249,7 @@ class Bufo {
 	/**
 	 * Read a buffer from this buffer.
 	 * If length is omitted, will read all remaining bytes into the buffer.
-	 * @param {number} [length]
+	 * @param {number|null} [length]
 	 * @returns {Buffer}
 	 */
 	readBuffer(length) {
@@ -376,8 +376,8 @@ class Bufo {
 	/**
 	 * Write the contents of a buffer (or Bufo instance) to this buffer.
 	 * @param {Buffer|Bufo} buffer
-	 * @param {number} [offset] Defaults to 0.
-	 * @param {number} [count] Defaults to all available bytes.
+	 * @param {number|null} [offset] Defaults to 0.
+	 * @param {number|null} [count] Defaults to all available bytes.
 	 */
 	writeBuffer(buffer, offset, count) {
 		if (buffer instanceof Bufo) {
