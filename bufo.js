@@ -5,15 +5,32 @@ const util = require('util');
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
-	 * @param {Buffer} buffer
+	 * @param {Buffer|Array|Bufo|String} buffer
 	 * @param {number} [defaultEncoding] Defaults to Bufo.ENDIAN_LITTLE
 	 * @constructor
 	 */
 	constructor(buffer, defaultEncoding) {
-		this._buffer = buffer;
 		this._offset = 0;
 		this._writeOffset = 0;
 		this.setEncoding(defaultEncoding || Bufo.ENDIAN_LITTLE);
+
+		if (buffer instanceof Buffer) {
+			// A nice, simple buffer.
+			this._buffer = buffer;
+		} else if (buffer instanceof Bufo) {
+			// This is weird, but we handle it anyway.
+			this._buffer = buffer.raw;
+		} else if (Array.isArray(buffer)) {
+			// Marshal byte-array to a buffer.
+			this._buffer = Buffer.from(buffer);
+		} else if (typeof buffer === 'string') {
+			// Not ideal, but handle strings naively.
+			this._buffer = Buffer.alloc(buffer.length);
+			for (let i = 0; i < buffer.length; i++)
+				this.writeUInt8(buffer.charCodeAt(i));
+		} else {
+			throw new Error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String.');
+		}
 	}
 
 	/**
