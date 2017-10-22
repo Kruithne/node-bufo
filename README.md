@@ -54,7 +54,7 @@ Create a new Bufo instance, wrapping the given input. How the input is handled d
 
 Parameter | Type | Info
 --------- | ---- | ----
-buffer | `Buffer|Bufo|Array|String` | Input, see table above.
+buffer | `Buffer\|Bufo\|Array\|String` | Input, see table above.
 defaultEncoding *(optional)* | `number` | Default endianness to use for all integer operations.
 
 ### `byteLength` : `number`
@@ -168,21 +168,21 @@ Write one or more signed 8-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 
 ### `writeUInt8(input)`
 Write one or more unsigned 8-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 
 ### `writeInt16(input, endian)`
 Write one or more signed 16-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeUInt16(input, endian)`
@@ -190,7 +190,7 @@ Write one or more unsigned 16-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeInt32(input, endian)`
@@ -198,7 +198,7 @@ Write one or more signed 32-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeUInt32(input, endian)`
@@ -206,7 +206,7 @@ Write one or more unsigned 32-bit integers to the buffer.
 
 Parameter | Type | Info
 --------- | ---- | ----
-input | `number|Array` | Values to be written.
+input | `number\|Array` | Values to be written.
 endian *(optional)* | `number` | Override the default endian for this call.
 
 ### `writeString(str, prefix)`
@@ -230,6 +230,6 @@ Writes a buffer (or Bufo instance) to the buffer. If `offset` is omitted, it wil
 
 Parameter | Type | Info
 --------- | ---- | ----
-buffer | `Buffer|Bufo` | Buffer to read from.
+buffer | `Buffer\|Bufo` | Buffer to read from.
 offset *(optional)* | `number` | Offset to start reading from.
 count *(optional)* | `number` | How many bytes to read.
