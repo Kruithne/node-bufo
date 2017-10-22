@@ -393,6 +393,7 @@ class Bufo {
 		}
 
 		buffer.copy(this._buffer, this._offset, offset, offset + count);
+		this._offset += count;
 		this._writeOffset = this._offset;
 	}
 
