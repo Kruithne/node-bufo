@@ -383,7 +383,7 @@ class Bufo {
 		if (buffer instanceof Bufo) {
 			offset = offset || buffer.offset;
 			if (count === undefined || count === null)
-				count = buffer.byteLength - offset;
+				count = buffer.remainingBytes;
 
 			buffer = buffer.raw;
 		} else {
