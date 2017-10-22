@@ -233,3 +233,12 @@ Parameter | Type | Info
 buffer | `Buffer\|Bufo` | Buffer to read from.
 offset *(optional)* | `number` | Offset to start reading from.
 count *(optional)* | `number` | How many bytes to read.
+
+### `toFile(path, count, options)`
+Write the specified count of bytes to a file.
+
+Parameter | Type | Info
+--------- | ---- | ----
+path | `string` | File path.
+count *(optional)* | `number` | Amount of bytes to write. Defaults to `remainingBytes`.
+options *(optional)* | `object` | Options table. See `fs.createWriteStream` for usage.

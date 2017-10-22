@@ -1,6 +1,7 @@
 /*! Bufo v1.0.0 (C) 2017 Kruithne <kruithne@gmail.com> MIT license */
 
 const util = require('util');
+const fs = require('fs');
 
 class Bufo {
 	/**
@@ -395,6 +396,17 @@ class Bufo {
 		buffer.copy(this._buffer, this._offset, offset, offset + count);
 		this._offset += count;
 		this._writeOffset = this._offset;
+	}
+
+	/**
+	 * Write the specified count of bytes to a file.
+	 * @param {string} path
+	 * @param {number|null} [count]
+	 * @param {object|null} [options]
+	 */
+	toFile(path, count, options) {
+		let stream = fs.createWriteStream(path, options);
+		stream.write(this.readBuffer(count));
 	}
 
 	/**
