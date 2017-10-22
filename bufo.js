@@ -12,7 +12,7 @@ class Bufo {
 	constructor(buffer, defaultEncoding) {
 		this._offset = 0;
 		this._writeOffset = 0;
-		this.setEncoding(defaultEncoding || Bufo.ENDIAN_LITTLE);
+		this.setEndian(defaultEncoding || Bufo.ENDIAN_LITTLE);
 
 		if (buffer instanceof Buffer) {
 			// A nice, simple buffer.
@@ -90,14 +90,14 @@ class Bufo {
 	}
 
 	/**
-	 * Set the default encoding used by this instance.
-	 * @param {number} encoding Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG
+	 * Set the default endian used by this instance.
+	 * @param {number} endian Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG
 	 */
-	setEncoding(encoding) {
-		if (encoding !== Bufo.ENDIAN_LITTLE && encoding !== Bufo.ENDIAN_BIG)
-			throw new Error('Invalid encoding provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
+	setEndian(endian) {
+		if (endian !== Bufo.ENDIAN_LITTLE && endian !== Bufo.ENDIAN_BIG)
+			throw new Error('Invalid endian provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
 
-		this._encoding = encoding;
+		this._endian = endian;
 	}
 
 	/**
@@ -150,41 +150,41 @@ class Bufo {
 	/**
 	 * Read one or more signed 16-bit integers.
 	 * @param {number} [count] How many integers to read.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @returns {number|Array}
 	 */
-	readInt16(count, encoding) {
-		return this._readInteger(this._buffer.readInt16LE, this._buffer.readInt16BE, 2, count, encoding);
+	readInt16(count, endian) {
+		return this._readInteger(this._buffer.readInt16LE, this._buffer.readInt16BE, 2, count, endian);
 	}
 
 	/**
 	 * Read one or more unsigned 16-bit integers.
 	 * @param {number} [count] How many integers to read.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @returns {number|Array}
 	 */
-	readUInt16(count, encoding) {
-		return this._readInteger(this._buffer.readUInt16LE, this._buffer.readUInt16BE, 2, count, encoding);
+	readUInt16(count, endian) {
+		return this._readInteger(this._buffer.readUInt16LE, this._buffer.readUInt16BE, 2, count, endian);
 	}
 
 	/**
 	 * Read one or more signed 32-bit integers.
 	 * @param {number} [count] How many integers to read.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @returns {number|Array}
 	 */
-	readInt32(count, encoding) {
-		return this._readInteger(this._buffer.readInt32LE, this._buffer.readInt32BE, 4, count, encoding);
+	readInt32(count, endian) {
+		return this._readInteger(this._buffer.readInt32LE, this._buffer.readInt32BE, 4, count, endian);
 	}
 
 	/**
 	 * Read one or more unsigned 32-bit integers.
 	 * @param {number} [count] How many integers to read.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @returns {number|Array}
 	 */
-	readUInt32(count, encoding) {
-		return this._readInteger(this._buffer.readUInt32LE, this._buffer.readUInt32BE, 4, count, encoding);
+	readUInt32(count, endian) {
+		return this._readInteger(this._buffer.readUInt32LE, this._buffer.readUInt32BE, 4, count, endian);
 	}
 
 	/**
@@ -291,37 +291,37 @@ class Bufo {
 	/**
 	 * Write one or more signed 16-bit integers.
 	 * @param {number|Array} input Integer(s) to write.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 */
-	writeInt16(input, encoding) {
-		this._writeInteger(this._buffer.writeInt16LE, this._buffer.writeInt16BE, input, 2, encoding);
+	writeInt16(input, endian) {
+		this._writeInteger(this._buffer.writeInt16LE, this._buffer.writeInt16BE, input, 2, endian);
 	}
 
 	/**
 	 * Write one or more unsigned 16-bit integers.
 	 * @param {number|Array} input Integer(s) to write.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 */
-	writeUInt16(input, encoding) {
-		this._writeInteger(this._buffer.writeUInt16LE, this._buffer.writeUInt16BE, input, 2, encoding);
+	writeUInt16(input, endian) {
+		this._writeInteger(this._buffer.writeUInt16LE, this._buffer.writeUInt16BE, input, 2, endian);
 	}
 
 	/**
 	 * Write one or more signed 32-bit integers.
 	 * @param {number|Array} input Integer(s) to write.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 */
-	writeInt32(input, encoding) {
-		this._writeInteger(this._buffer.writeInt32LE, this._buffer.writeInt32BE, input, 4, encoding);
+	writeInt32(input, endian) {
+		this._writeInteger(this._buffer.writeInt32LE, this._buffer.writeInt32BE, input, 4, endian);
 	}
 
 	/**
 	 * Write one or more unsigned 32-bit integers.
 	 * @param {number|Array} input Integer(s) to write.
-	 * @param {number} [encoding] Non-default encoding to use.
+	 * @param {number} [endian] Non-default endian to use.
 	 */
-	writeUInt32(input, encoding) {
-		this._writeInteger(this._buffer.writeUInt32LE, this._buffer.writeUInt32BE, input, 4, encoding);
+	writeUInt32(input, endian) {
+		this._writeInteger(this._buffer.writeUInt32LE, this._buffer.writeUInt32BE, input, 4, endian);
 	}
 
 	/**
@@ -399,10 +399,10 @@ class Bufo {
 	 * Allocate a new Bufo-wrapped buffer.
 	 * @param {number} size
 	 * @param {boolean} [safe]
-	 * @param {number} [encoding]
+	 * @param {number} [endian]
 	 */
-	static create(size, safe, encoding) {
-		return new Bufo((safe ? Buffer.alloc : Buffer.allocUnsafe)(size), encoding);
+	static create(size, safe, endian) {
+		return new Bufo((safe ? Buffer.alloc : Buffer.allocUnsafe)(size), endian);
 	}
 
 	/**
@@ -411,13 +411,13 @@ class Bufo {
 	 * @param {function} bigFunc Big-endian
 	 * @param {number} size Size of integer type.
 	 * @param {number} count Amount of integers to read.
-	 * @param {number} [encoding] Call-specific encoding.
+	 * @param {number} [endian] Call-specific endian.
 	 * @returns {number|Array}
 	 * @private
 	 */
-	_readInteger(littleFunc, bigFunc, size, count, encoding) {
-		encoding = encoding || this._encoding;
-		return this._read(encoding === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, size, count);
+	_readInteger(littleFunc, bigFunc, size, count, endian) {
+		endian = endian || this._endian;
+		return this._read(endian === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, size, count);
 	}
 
 	/**
@@ -450,12 +450,12 @@ class Bufo {
 	 * @param {function} bigFunc
 	 * @param {number|Array} input
 	 * @param {number} size
-	 * @param {number} [encoding]
+	 * @param {number} [endian]
 	 * @private
 	 */
-	_writeInteger(littleFunc, bigFunc, input, size, encoding) {
-		encoding = encoding || this._encoding;
-		this._write(encoding === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, input, size);
+	_writeInteger(littleFunc, bigFunc, input, size, endian) {
+		endian = endian || this._endian;
+		this._write(endian === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, input, size);
 	}
 
 	/**

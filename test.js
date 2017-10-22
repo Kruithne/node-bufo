@@ -47,7 +47,7 @@ a.seek(0); check(a.readUInt32(1, Bufo.ENDIAN_BIG), 4292005630); // Int32, Unsign
 a.seek(0); check(a.readInt32(1, Bufo.ENDIAN_BIG), -2961666); // Int32, Signed
 
 // Read Integers (Switch to Big Endian)
-a.setEncoding(Bufo.ENDIAN_BIG);
+a.setEndian(Bufo.ENDIAN_BIG);
 a.seek(0); check(a.readUInt8(), 255); // Int8, Unsigned
 a.seek(0); check(a.readInt8(), -1); // Int8, Signed
 a.seek(0); check(a.readUInt16(), 65490); // Int16, Unsigned
@@ -74,7 +74,7 @@ for (let i = 0; i < readBytes.length; i++)
 	check(readBytes[i], expected[i]); // Output should match defined above.
 
 // Writing //
-a.setEncoding(Bufo.ENDIAN_LITTLE); // Revert encoding.
+a.setEndian(Bufo.ENDIAN_LITTLE); // Revert endian.
 a.seek(0); a.writeUInt8(0x48); // Write a byte at the start.
 a.seek(0); check(a.readUInt8(), 0x48); // Read the byte back.
 
@@ -92,5 +92,5 @@ a.seek(0); check(a.readString(10), "FrogsWorld"); // Check string was written an
 a.seek(0); a.writeString("Buzzzz", true); // Write a prefixed string.
 a.seek(0); check(a.readUInt32(), 6); // Check string length was prefixed.
 a.seek(0); check(a.readString(), "Buzzzz"); // Read length-prefixed string.
-a.seek(0); a.writeUTF8String("こんにちは", true); // Write UTF8 string (length prefixed).
-a.seek(0); check(a.readUTF8String(), "こんにちは"); // Read UTF8 string back (length prefixed).
+a.seek(0); a.writeUTF8String("こ", true); // Write UTF8 string (length prefixed).
+a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length prefixed).
