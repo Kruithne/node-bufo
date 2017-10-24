@@ -1,4 +1,8 @@
-/*! Bufo v1.0.0 (C) 2017 Kruithne <kruithne@gmail.com> MIT license */
+/*!
+	Bufo (https://github.com/Kruithne/node-bufo)
+	Author: Kruithne <kruithne@gmail.com>
+	License: MIT
+ */
 
 const util = require('util');
 const fs = require('fs');
