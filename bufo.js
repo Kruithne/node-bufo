@@ -4,7 +4,6 @@
 	License: MIT
  */
 
-const util = require('util');
 const fs = require('fs');
 
 class Bufo {
@@ -34,7 +33,7 @@ class Bufo {
 			for (let i = 0; i < buffer.length; i++)
 				this.writeUInt8(buffer.charCodeAt(i));
 		} else {
-			throw new Error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String.');
+			Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String.');
 		}
 	}
 
@@ -100,7 +99,7 @@ class Bufo {
 	 */
 	setEndian(endian) {
 		if (endian !== Bufo.ENDIAN_LITTLE && endian !== Bufo.ENDIAN_BIG)
-			throw new Error('Invalid endian provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
+			Bufo._error('Invalid endian provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
 
 		this._endian = endian;
 	}
@@ -113,7 +112,7 @@ class Bufo {
 	seek(offset) {
 		let offsetLen = Math.abs(offset);
 		if (offsetLen >= this.byteLength)
-			throw new Error(util.format('seek() offset out of bounds (%d > %d).', offset, this.byteLength));
+			Bufo._error('seek() offset out of bounds ({0} > {1})', offset, this.byteLength);
 
 		if (offset < 0)
 			this._offset = this.byteLength - offsetLen;
@@ -129,7 +128,7 @@ class Bufo {
 	move(offset) {
 		let check = this._offset + offset;
 		if (check < 0 || check >= this.byteLength)
-			throw new Error(util.format('move() offset out of bounds (%d)', check));
+			Bufo._error('move() offset out of bounds ({0})', check);
 
 		this._offset = check;
 	}
@@ -495,6 +494,18 @@ class Bufo {
 		}
 
 		this._writeOffset = this._offset;
+	}
+
+	/**
+	 * Static helper for throwing errors from Bufo.
+	 * @param {string} message Error message.
+	 * @param args
+	 * @private
+	 */
+	static _error(message, ...args) {
+		throw new Error('Bufo: ' + message.replace(/{(\d+)}/g, (match, number) => {
+			return typeof args[number] !== 'undefined' ? args[number] : match;
+		}));
 	}
 }
 
