@@ -4,8 +4,6 @@
 	License: MIT
  */
 
-const fs = require('fs');
-
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
@@ -408,7 +406,7 @@ class Bufo {
 	 * @param {object|null} [options]
 	 */
 	toFile(path, count, options) {
-		let stream = fs.createWriteStream(path, options);
+		let stream = require('fs').createWriteStream(path, options);
 		stream.write(this.readBuffer(count));
 	}
 
@@ -509,4 +507,6 @@ class Bufo {
 	}
 }
 
-module.exports = Bufo;
+// Export to NodeJS.
+if (typeof module === 'object' && typeof module.exports === 'object')
+	module.exports = Bufo;
