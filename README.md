@@ -1,14 +1,19 @@
-# Bufo - Buffer utility for Node v6+
+# Bufo - Buffer utility for ES6
 In a world filled with Buffer related packages, this is nothing but another fish in the ocean. Bufo acts as a wrapper for the Buffer class, providing position-aware reading utility.
 
 If you're wondering about the origin of the name, this package was named after a frog in World of Warcraft.
 
-## Installing
+## Installing (Node)
 ```
 npm install bufo
 ```
 
-## Usage
+## Installing (Browser)
+```
+<script src="bufo.js"></script>
+```
+
+## Example Usage (Node)
 ```javascript
 const Bufo = require('bufo');
 
