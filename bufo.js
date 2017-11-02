@@ -4,10 +4,13 @@
 	License: MIT
  */
 
+const NODE_BUFFER_SUPPORT = typeof Buffer === 'function';
+const WEB_BUFFER_SUPPORT = typeof DataView === 'function' && typeof ArrayBuffer === 'function';
+
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
-	 * @param {Buffer|Array|Bufo|String} buffer
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView} buffer
 	 * @param {number} [defaultEncoding] Defaults to Bufo.ENDIAN_LITTLE
 	 * @constructor
 	 */
@@ -16,22 +19,34 @@ class Bufo {
 		this._writeOffset = 0;
 		this.setEndian(defaultEncoding || Bufo.ENDIAN_LITTLE);
 
-		if (buffer instanceof Buffer) {
-			// A nice, simple buffer.
+		if (NODE_BUFFER_SUPPORT && buffer instanceof Buffer) {
+			// NodeJS Buffer, wrap it normally.
+			this._buffer = buffer;
+		} else if (WEB_BUFFER_SUPPORT && buffer instanceof ArrayBuffer) {
+			// ArrayBuffer, create a DataView for it.
+			this._buffer = new DataView(buffer);
+		} else if (WEB_BUFFER_SUPPORT && buffer instanceof DataView) {
+			// DataView, wrap it normally.
 			this._buffer = buffer;
 		} else if (buffer instanceof Bufo) {
-			// This is weird, but we handle it anyway.
+			// Weird, but sometimes used to ensure a fresh instance.
 			this._buffer = buffer.raw;
 		} else if (Array.isArray(buffer)) {
-			// Marshal byte-array to a buffer.
-			this._buffer = Buffer.from(buffer);
+			if (NODE_BUFFER_SUPPORT) {
+				// Marshal byte-array to a NodeJS buffer using utility.
+				this._buffer = Buffer.from(buffer);
+			} else if (WEB_BUFFER_SUPPORT) {
+				// Marshal byte-array to an ArrayBuffer manually.
+				this._buffer = new DataView(new ArrayBuffer(buffer.length));
+				this.writeUInt8(buffer);
+			}
 		} else if (typeof buffer === 'string') {
 			// Not ideal, but handle strings naively.
 			this._buffer = Buffer.alloc(buffer.length);
 			for (let i = 0; i < buffer.length; i++)
 				this.writeUInt8(buffer.charCodeAt(i));
 		} else {
-			Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String.');
+			Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
 		}
 	}
 
@@ -56,7 +71,7 @@ class Bufo {
 	 * @returns {number}
 	 */
 	get byteLength() {
-		return this._buffer.length;
+		return this._buffer.byteLength;
 	}
 
 	/**
@@ -85,7 +100,7 @@ class Bufo {
 
 	/**
 	 * Get the raw internal buffer for this instance.
-	 * @returns {Buffer}
+	 * @returns {Buffer|DataView}
 	 */
 	get raw() {
 		return this._buffer;
