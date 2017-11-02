@@ -10,7 +10,7 @@ const WEB_BUFFER_SUPPORT = typeof DataView === 'function' && typeof ArrayBuffer 
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
-	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView} buffer
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} buffer
 	 * @param {number} [defaultEncoding] Defaults to Bufo.ENDIAN_LITTLE
 	 * @constructor
 	 */
