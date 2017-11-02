@@ -397,16 +397,6 @@ class Bufo {
 	}
 
 	/**
-	 * Allocate a new Bufo-wrapped buffer.
-	 * @param {number} size
-	 * @param {boolean} [safe]
-	 * @param {number} [endian]
-	 */
-	static create(size, safe, endian) {
-		return new Bufo((safe ? Buffer.alloc : Buffer.allocUnsafe)(size), endian);
-	}
-
-	/**
 	 * Read an integer from the internal buffer.
 	 * @param {function} littleFunc
 	 * @param {function} bigFunc Big-endian
@@ -482,13 +472,23 @@ class Bufo {
 
 	/**
 	 * Wrap the given input side this instance.
-	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView} buffer
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} buffer
 	 * @private
 	 */
 	_wrap(buffer) {
 		// Ensure we support at least something.
 		if (!NODE_BUFFER_SUPPORT && !WEB_BUFFER_SUPPORT)
 			Bufo._error('Cannot instantiate Bufo. No support for Buffer or DataView.');
+
+		// If provided with a number, create a new buffer with that size.
+		if (typeof buffer === 'number') {
+			if (NODE_BUFFER_SUPPORT)
+				this._buffer = Buffer.alloc(buffer);
+			else if (WEB_BUFFER_SUPPORT)
+				this._buffer = new DataView(new ArrayBuffer(buffer));
+
+			return;
+		}
 
 		// NodeJS Buffer, wrap it normally.
 		if (NODE_BUFFER_SUPPORT && buffer instanceof Buffer) {
