@@ -13,17 +13,26 @@ npm install bufo
 <script src="bufo.js"></script>
 ```
 
-## Example Usage (Node)
+## Example (Creation)
 ```javascript
-const Bufo = require('bufo');
+// Create a Bufo instance providing nothing more than a size...
+let data = new Bufo(10);
 
-// Create a new Bufo instance with a Buffer..
+// Using an exisitng NodeJS buffer...
 let buffer = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
 let data = new Bufo(buffer);
 
-// .. Or cut out the middle man, send in the byte-array directly ..
-data = new Bufo([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
+// Using a string, if you felt like it...
+let data = new Bufo('\u00bd\u00bc\u00be');
 
+// Using a native array filled with bytes...
+let data = new Bufo([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
+
+// .. And more! Check the documentation for all options.
+```
+
+## Example (Usage)
+```javascript
 data.readUInt8(); // -> 0x48
 data.readUInt8(); // -> 0x65
 data.move(-2); // Back to the start we go...
@@ -38,28 +47,22 @@ Static constant representing the little-endian byte-order. Can be provided to th
 ### `Bufo.ENDIAN_BIG`
 Static constant representing the big-endian byte-order. Can be provided to the constructor to set the default endianness, or to individual integer read/write calls to over-write the default endianness for that call.
 
-### `Bufo.create(size, safe, endian)`
-Allocate a new buffer wrapped inside a Bufo instance.
-
-Parameter | Type | Info
---------- | ---- | ----
-size | `number` | Size of the buffer to allocate.
-safe *(optional)* | `boolean` | Use safe allocation. (Defaults to false).
-endian *(optional)* | `number` | Default endian to use. (Defaults to Bufo.ENDIAN_LITTLE)
-
 ### `new Bufo(buffer, defaultEncoding)`
 Create a new Bufo instance, wrapping the given input. How the input is handled depends on the type, check the table below.
 
 | Type | Action |
 | ---- | ------ |
-| Buffer | Buffer will be wrapped by the Bufo instance. |
-| Bufo | Wrapped buffer will be wrapped by this instance, too. |
-| Array | Treated as a byte-array, new buffer will be allocated, wrapped and filled with the bytes. |
-| String | Will be treated as a byte-array, with each char being a single byte. See Array.
+| `Buffer` | Buffer will be wrapped by the Bufo instance. |
+| `Bufo` | Wrapped buffer will be wrapped by this instance, too. |
+| `Array` | Treated as a byte-array, new buffer will be allocated, wrapped and filled with the bytes. |
+| `string` | Will be treated as a byte-array, with each char being a single byte. See Array.
+| `number` | An empty instance allocated to the given size. |
+| `DataView` | The given DataView will be wrapped by the Bufo instance. |
+| `ArrayBuffer` | A DataView for this ArrayBuffer will be created and wrapped by the Bufo instance. |
 
 Parameter | Type | Info
 --------- | ---- | ----
-buffer | `Buffer\|Bufo\|Array\|String` | Input, see table above.
+buffer | `*` | Input, see table above.
 defaultEncoding *(optional)* | `number` | Default endianness to use for all integer operations.
 
 ### `byteLength` : `number`
