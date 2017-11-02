@@ -241,6 +241,9 @@ class Bufo {
 	 * @returns {Buffer}
 	 */
 	readBuffer(length) {
+		if (!NODE_BUFFER_SUPPORT)
+			return Bufo._error('readBuffer() called in environment without Buffer support.');
+
 		if (length === undefined || length === null)
 			length = this.remainingBytes;
 
