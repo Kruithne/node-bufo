@@ -260,7 +260,9 @@ class Bufo {
 	 * @returns {Bufo}
 	 */
 	readBufo(length) {
-		return new Bufo(this.readBuffer(length));
+		let target = new Bufo(length);
+		target.writeUInt8(this.readUInt8(length));
+		return target;
 	}
 
 	/**
