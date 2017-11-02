@@ -18,36 +18,7 @@ class Bufo {
 		this._offset = 0;
 		this._writeOffset = 0;
 		this.setEndian(defaultEncoding || Bufo.ENDIAN_LITTLE);
-
-		if (NODE_BUFFER_SUPPORT && buffer instanceof Buffer) {
-			// NodeJS Buffer, wrap it normally.
-			this._buffer = buffer;
-		} else if (WEB_BUFFER_SUPPORT && buffer instanceof ArrayBuffer) {
-			// ArrayBuffer, create a DataView for it.
-			this._buffer = new DataView(buffer);
-		} else if (WEB_BUFFER_SUPPORT && buffer instanceof DataView) {
-			// DataView, wrap it normally.
-			this._buffer = buffer;
-		} else if (buffer instanceof Bufo) {
-			// Weird, but sometimes used to ensure a fresh instance.
-			this._buffer = buffer.raw;
-		} else if (Array.isArray(buffer)) {
-			if (NODE_BUFFER_SUPPORT) {
-				// Marshal byte-array to a NodeJS buffer using utility.
-				this._buffer = Buffer.from(buffer);
-			} else if (WEB_BUFFER_SUPPORT) {
-				// Marshal byte-array to an ArrayBuffer manually.
-				this._buffer = new DataView(new ArrayBuffer(buffer.length));
-				this.writeUInt8(buffer);
-			}
-		} else if (typeof buffer === 'string') {
-			// Not ideal, but handle strings naively.
-			this._buffer = Buffer.alloc(buffer.length);
-			for (let i = 0; i < buffer.length; i++)
-				this.writeUInt8(buffer.charCodeAt(i));
-		} else {
-			Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
-		}
+		this._wrap(buffer);
 	}
 
 	/**
@@ -507,6 +478,64 @@ class Bufo {
 		}
 
 		this._writeOffset = this._offset;
+	}
+
+	/**
+	 * Wrap the given input side this instance.
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView} buffer
+	 * @private
+	 */
+	_wrap(buffer) {
+		// Ensure we support at least something.
+		if (!NODE_BUFFER_SUPPORT && !WEB_BUFFER_SUPPORT)
+			Bufo._error('Cannot instantiate Bufo. No support for Buffer or DataView.');
+
+		// NodeJS Buffer, wrap it normally.
+		if (NODE_BUFFER_SUPPORT && buffer instanceof Buffer) {
+			this._buffer = buffer;
+			return;
+		}
+
+		// ArrayBuffer, create a DataView for it.
+		if (WEB_BUFFER_SUPPORT && buffer instanceof ArrayBuffer) {
+			this._buffer = new DataView(buffer);
+			return;
+		}
+
+		// DataView, wrap it normally.
+		if (WEB_BUFFER_SUPPORT && buffer instanceof DataView) {
+			this._buffer = buffer;
+		}
+
+		// Weird, but sometimes used to ensure a fresh instance.
+		if (buffer instanceof Bufo) {
+			this._buffer = buffer.raw;
+		}
+
+		// Marshal the array to a supported binary type.
+		if (Array.isArray(buffer)) {
+			if (NODE_BUFFER_SUPPORT) {
+				this._buffer = Buffer.from(buffer);
+			} else if (WEB_BUFFER_SUPPORT) {
+				this._buffer = new DataView(new ArrayBuffer(buffer.length));
+				this.writeUInt8(buffer);
+			}
+		}
+
+		// Not ideal, but handle strings naively.
+		if (typeof buffer === 'string') {
+			if (NODE_BUFFER_SUPPORT)
+				this._buffer = Buffer.alloc(buffer.length);
+			else if (WEB_BUFFER_SUPPORT)
+				this._buffer = new DataView(new ArrayBuffer(buffer.length));
+
+			for (let i = 0; i < buffer.length; i++)
+				this.writeUInt8(buffer.charCodeAt(i));
+
+			return;
+		}
+
+		Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
 	}
 
 	/**
