@@ -10,15 +10,15 @@ const WEB_BUFFER_SUPPORT = typeof DataView === 'function' && typeof ArrayBuffer 
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
-	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} buffer
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} input
 	 * @param {number} [defaultEncoding] Defaults to Bufo.ENDIAN_LITTLE
 	 * @constructor
 	 */
-	constructor(buffer, defaultEncoding) {
+	constructor(input, defaultEncoding) {
 		this._offset = 0;
 		this._writeOffset = 0;
 		this.setEndian(defaultEncoding || Bufo.ENDIAN_LITTLE);
-		this._wrap(buffer);
+		this._wrap(input);
 	}
 
 	/**
@@ -472,65 +472,65 @@ class Bufo {
 
 	/**
 	 * Wrap the given input side this instance.
-	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} buffer
+	 * @param {Buffer|Array|Bufo|String|ArrayBuffer|DataView|number} input
 	 * @private
 	 */
-	_wrap(buffer) {
+	_wrap(input) {
 		// Ensure we support at least something.
 		if (!NODE_BUFFER_SUPPORT && !WEB_BUFFER_SUPPORT)
 			Bufo._error('Cannot instantiate Bufo. No support for Buffer or DataView.');
 
 		// If provided with a number, create a new buffer with that size.
-		if (typeof buffer === 'number') {
+		if (typeof input === 'number') {
 			if (NODE_BUFFER_SUPPORT)
-				this._buffer = Buffer.alloc(buffer);
+				this._buffer = Buffer.alloc(input);
 			else if (WEB_BUFFER_SUPPORT)
-				this._buffer = new DataView(new ArrayBuffer(buffer));
+				this._buffer = new DataView(new ArrayBuffer(input));
 
 			return;
 		}
 
 		// NodeJS Buffer, wrap it normally.
-		if (NODE_BUFFER_SUPPORT && buffer instanceof Buffer) {
-			this._buffer = buffer;
+		if (NODE_BUFFER_SUPPORT && input instanceof Buffer) {
+			this._buffer = input;
 			return;
 		}
 
 		// ArrayBuffer, create a DataView for it.
-		if (WEB_BUFFER_SUPPORT && buffer instanceof ArrayBuffer) {
-			this._buffer = new DataView(buffer);
+		if (WEB_BUFFER_SUPPORT && input instanceof ArrayBuffer) {
+			this._buffer = new DataView(input);
 			return;
 		}
 
 		// DataView, wrap it normally.
-		if (WEB_BUFFER_SUPPORT && buffer instanceof DataView) {
-			this._buffer = buffer;
+		if (WEB_BUFFER_SUPPORT && input instanceof DataView) {
+			this._buffer = input;
 		}
 
 		// Weird, but sometimes used to ensure a fresh instance.
-		if (buffer instanceof Bufo) {
-			this._buffer = buffer.raw;
+		if (input instanceof Bufo) {
+			this._buffer = input.raw;
 		}
 
 		// Marshal the array to a supported binary type.
-		if (Array.isArray(buffer)) {
+		if (Array.isArray(input)) {
 			if (NODE_BUFFER_SUPPORT) {
-				this._buffer = Buffer.from(buffer);
+				this._buffer = Buffer.from(input);
 			} else if (WEB_BUFFER_SUPPORT) {
-				this._buffer = new DataView(new ArrayBuffer(buffer.length));
-				this.writeUInt8(buffer);
+				this._buffer = new DataView(new ArrayBuffer(input.length));
+				this.writeUInt8(input);
 			}
 		}
 
 		// Not ideal, but handle strings naively.
-		if (typeof buffer === 'string') {
+		if (typeof input === 'string') {
 			if (NODE_BUFFER_SUPPORT)
-				this._buffer = Buffer.alloc(buffer.length);
+				this._buffer = Buffer.alloc(input.length);
 			else if (WEB_BUFFER_SUPPORT)
-				this._buffer = new DataView(new ArrayBuffer(buffer.length));
+				this._buffer = new DataView(new ArrayBuffer(input.length));
 
-			for (let i = 0; i < buffer.length; i++)
-				this.writeUInt8(buffer.charCodeAt(i));
+			for (let i = 0; i < input.length; i++)
+				this.writeUInt8(input.charCodeAt(i));
 
 			return;
 		}
