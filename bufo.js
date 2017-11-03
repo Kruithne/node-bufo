@@ -7,6 +7,110 @@
 const NODE_BUFFER_SUPPORT = typeof Buffer === 'function';
 const WEB_BUFFER_SUPPORT = typeof DataView === 'function' && typeof ArrayBuffer === 'function';
 
+const ENDIAN_LITTLE = 0x1;
+const ENDIAN_BIG = 0x2;
+
+const TYPE_BUFFER = 0x1;
+const TYPE_WEB = 0x2;
+
+const TYPE_INT8 = 0x1;
+const TYPE_UINT8 = 0x2;
+const TYPE_INT16 = 0x3;
+const TYPE_UINT16 = 0x4;
+const TYPE_INT32 = 0x5;
+const TYPE_UINT32 = 0x6;
+
+const TYPE_SIZES = {
+	[TYPE_INT8]: 1,
+	[TYPE_UINT8]: 1,
+	[TYPE_INT16]: 2,
+	[TYPE_UINT16]: 2,
+	[TYPE_INT32]: 4,
+	[TYPE_UINT32]: 4
+};
+
+const READ_FUNCTION_SET = {
+	[TYPE_BUFFER]: {
+		[ENDIAN_LITTLE]: {
+			[TYPE_INT8]: (buf, ofs) => Buffer.prototype.readInt8.call(buf, ofs),
+			[TYPE_UINT8]: (buf, ofs) => Buffer.prototype.readUInt8.call(buf, ofs),
+			[TYPE_INT16]: (buf, ofs) => Buffer.prototype.readInt16LE.call(buf, ofs),
+			[TYPE_UINT16]: (buf, ofs) => Buffer.prototype.readUInt16LE.call(buf, ofs),
+			[TYPE_INT32]: (buf, ofs) => Buffer.prototype.readInt32LE.call(buf, ofs),
+			[TYPE_UINT32]: (buf, ofs) => Buffer.prototype.readUInt32LE.call(buf, ofs)
+		},
+
+		[ENDIAN_BIG]: {
+			[TYPE_INT8]: (buf, ofs) => Buffer.prototype.readInt8.call(buf, ofs),
+			[TYPE_UINT8]: (buf, ofs) => Buffer.prototype.readUInt8.call(buf, ofs),
+			[TYPE_INT16]: (buf, ofs) => Buffer.prototype.readInt16BE.call(buf, ofs),
+			[TYPE_UINT16]: (buf, ofs) => Buffer.prototype.readUInt16BE.call(buf, ofs),
+			[TYPE_INT32]: (buf, ofs) => Buffer.prototype.readInt32BE.call(buf, ofs),
+			[TYPE_UINT32]: (buf, ofs) => Buffer.prototype.readUInt32BE.call(buf, ofs)
+		}
+	},
+	[TYPE_WEB]: {
+		[ENDIAN_LITTLE]: {
+			[TYPE_INT8]: (buf, ofs) => DataView.prototype.getInt8.call(buf, ofs),
+			[TYPE_UINT8]: (buf, ofs) => DataView.prototype.getUint8.call(buf, ofs),
+			[TYPE_INT16]: (buf, ofs) => DataView.prototype.getInt16.call(buf, ofs, true),
+			[TYPE_UINT16]: (buf, ofs) => DataView.prototype.getUint16.call(buf, ofs, true),
+			[TYPE_INT32]: (buf, ofs) => DataView.prototype.getInt32.call(buf, ofs, true),
+			[TYPE_UINT32]: (buf, ofs) => DataView.prototype.getUint32.call(buf, ofs, true)
+		},
+
+		[ENDIAN_BIG]: {
+			[TYPE_INT8]: (buf, ofs) => DataView.prototype.getInt8.call(buf, ofs),
+			[TYPE_UINT8]: (buf, ofs) => DataView.prototype.getUint8.call(buf, ofs),
+			[TYPE_INT16]: (buf, ofs) => DataView.prototype.getInt16.call(buf, ofs, false),
+			[TYPE_UINT16]: (buf, ofs) => DataView.prototype.getUint16.call(buf, ofs, false),
+			[TYPE_INT32]: (buf, ofs) => DataView.prototype.getInt32.call(buf, ofs, false),
+			[TYPE_UINT32]: (buf, ofs) => DataView.prototype.getUint32.call(buf, ofs, false)
+		}
+	}
+};
+
+const WRITE_FUNCTION_SET = {
+	[TYPE_BUFFER]: {
+		[ENDIAN_LITTLE]: {
+			[TYPE_INT8]: (buf, ofs, val) => Buffer.prototype.writeInt8.call(buf, val, ofs),
+			[TYPE_UINT8]: (buf, ofs, val) => Buffer.prototype.writeUInt8.call(buf, val, ofs),
+			[TYPE_INT16]: (buf, ofs, val) => Buffer.prototype.writeInt16LE.call(buf, val, ofs),
+			[TYPE_UINT16]: (buf, ofs, val) => Buffer.prototype.writeUInt16LE.call(buf, val, ofs),
+			[TYPE_INT32]: (buf, ofs, val) => Buffer.prototype.writeInt32LE.call(buf, val, ofs),
+			[TYPE_UINT32]: (buf, ofs, val) => Buffer.prototype.writeUInt32LE.call(buf, val, ofs),
+		},
+
+		[ENDIAN_BIG]: {
+			[TYPE_INT8]: (buf, ofs, val) => Buffer.prototype.writeInt8.call(buf, val, ofs),
+			[TYPE_UINT8]: (buf, ofs, val) => Buffer.prototype.writeUInt8.call(buf, val, ofs),
+			[TYPE_INT16]: (buf, ofs, val) => Buffer.prototype.writeInt16BE.call(buf, val, ofs),
+			[TYPE_UINT16]: (buf, ofs, val) => Buffer.prototype.writeUInt16BE.call(buf, val, ofs),
+			[TYPE_INT32]: (buf, ofs, val) => Buffer.prototype.writeInt32BE.call(buf, val, ofs),
+			[TYPE_UINT32]: (buf, ofs, val) => Buffer.prototype.writeUInt32BE.call(buf, val, ofs),
+		}
+	},
+	[TYPE_WEB]: {
+		[ENDIAN_LITTLE]: {
+			[TYPE_INT8]: (buf, ofs, val) => DataView.prototype.setInt8.call(buf, ofs, val),
+			[TYPE_UINT8]: (buf, ofs, val) => DataView.prototype.setUint8.call(buf, ofs, val),
+			[TYPE_INT16]: (buf, ofs, val) => DataView.prototype.setInt16.call(buf, ofs, val, true),
+			[TYPE_UINT16]: (buf, ofs, val) => DataView.prototype.setUint16.call(buf, ofs, val, true),
+			[TYPE_INT32]: (buf, ofs, val) => DataView.prototype.setInt32.call(buf, ofs, val, true),
+			[TYPE_UINT32]: (buf, ofs, val) => DataView.prototype.setUint32.call(buf, ofs, val, true),
+		},
+
+		[ENDIAN_BIG]: {
+			[TYPE_INT8]: (buf, ofs, val) => DataView.prototype.setInt8.call(buf, ofs, val),
+			[TYPE_UINT8]: (buf, ofs, val) => DataView.prototype.setUint8.call(buf, ofs, val),
+			[TYPE_INT16]: (buf, ofs, val) => DataView.prototype.setInt16.call(buf, ofs, val, false),
+			[TYPE_UINT16]: (buf, ofs, val) => DataView.prototype.setUint16.call(buf, ofs, val, false),
+			[TYPE_INT32]: (buf, ofs, val) => DataView.prototype.setInt32.call(buf, ofs, val, false),
+			[TYPE_UINT32]: (buf, ofs, val) => DataView.prototype.setUint32.call(buf, ofs, val, false),
+		}
+	}
+};
+
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
@@ -26,7 +130,7 @@ class Bufo {
 	 * @returns {number}
 	 */
 	static get ENDIAN_LITTLE() {
-		return 0x1;
+		return ENDIAN_LITTLE;
 	}
 
 	/**
@@ -34,7 +138,7 @@ class Bufo {
 	 * @returns {number}
 	 */
 	static get ENDIAN_BIG() {
-		return 0x2;
+		return ENDIAN_BIG;
 	}
 
 	/**
@@ -75,6 +179,20 @@ class Bufo {
 	 */
 	get raw() {
 		return this._buffer;
+	}
+
+	/**
+	 * Set the raw internal buffer for this instance.
+	 * @param {Buffer|DataView} input
+	 */
+	set raw(input) {
+		if (NODE_BUFFER_SUPPORT && input instanceof Buffer) {
+			this._internalType = TYPE_BUFFER;
+		} else if (WEB_BUFFER_SUPPORT && input instanceof DataView) {
+			this._internalType = TYPE_WEB;
+		}
+
+		this._buffer = input;
 	}
 
 	/**
@@ -123,7 +241,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readInt8(count) {
-		return this._read(this._buffer.readInt8, 1, count);
+		return this._readInt(TYPE_INT8, count);
 	}
 
 	/**
@@ -132,7 +250,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readUInt8(count) {
-		return this._read(this._buffer.readUInt8, 1, count);
+		return this._readInt(TYPE_UINT8, count);
 	}
 
 	/**
@@ -142,7 +260,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readInt16(count, endian) {
-		return this._readInteger(this._buffer.readInt16LE, this._buffer.readInt16BE, 2, count, endian);
+		return this._readInt(TYPE_INT16, count, endian);
 	}
 
 	/**
@@ -152,7 +270,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readUInt16(count, endian) {
-		return this._readInteger(this._buffer.readUInt16LE, this._buffer.readUInt16BE, 2, count, endian);
+		return this._readInt(TYPE_UINT16, count, endian);
 	}
 
 	/**
@@ -162,7 +280,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readInt32(count, endian) {
-		return this._readInteger(this._buffer.readInt32LE, this._buffer.readInt32BE, 4, count, endian);
+		return this._readInt(TYPE_INT32, count, endian);
 	}
 
 	/**
@@ -172,7 +290,7 @@ class Bufo {
 	 * @returns {number|Array}
 	 */
 	readUInt32(count, endian) {
-		return this._readInteger(this._buffer.readUInt32LE, this._buffer.readUInt32BE, 4, count, endian);
+		return this._readInt(TYPE_UINT32, count, endian);
 	}
 
 	/**
@@ -270,7 +388,7 @@ class Bufo {
 	 * @param {number|Array} input
 	 */
 	writeInt8(input) {
-		this._write(this._buffer.writeInt8, input, 1);
+		this._writeInt(TYPE_INT8, input);
 	}
 
 	/**
@@ -278,7 +396,7 @@ class Bufo {
 	 * @param {number|Array} input
 	 */
 	writeUInt8(input) {
-		this._write(this._buffer.writeUInt8, input, 1);
+		this._writeInt(TYPE_UINT8, input);
 	}
 
 	/**
@@ -287,7 +405,7 @@ class Bufo {
 	 * @param {number} [endian] Non-default endian to use.
 	 */
 	writeInt16(input, endian) {
-		this._writeInteger(this._buffer.writeInt16LE, this._buffer.writeInt16BE, input, 2, endian);
+		this._writeInt(TYPE_INT16, input, endian);
 	}
 
 	/**
@@ -296,7 +414,7 @@ class Bufo {
 	 * @param {number} [endian] Non-default endian to use.
 	 */
 	writeUInt16(input, endian) {
-		this._writeInteger(this._buffer.writeUInt16LE, this._buffer.writeUInt16BE, input, 2, endian);
+		this._writeInt(TYPE_UINT16, input, endian);
 	}
 
 	/**
@@ -305,7 +423,7 @@ class Bufo {
 	 * @param {number} [endian] Non-default endian to use.
 	 */
 	writeInt32(input, endian) {
-		this._writeInteger(this._buffer.writeInt32LE, this._buffer.writeInt32BE, input, 4, endian);
+		this._writeInt(TYPE_INT32, input, endian);
 	}
 
 	/**
@@ -314,7 +432,7 @@ class Bufo {
 	 * @param {number} [endian] Non-default endian to use.
 	 */
 	writeUInt32(input, endian) {
-		this._writeInteger(this._buffer.writeUInt32LE, this._buffer.writeUInt32BE, input, 4, endian);
+		this._writeInt(TYPE_UINT32, input, endian);
 	}
 
 	/**
@@ -403,72 +521,50 @@ class Bufo {
 
 	/**
 	 * Read an integer from the internal buffer.
-	 * @param {function} littleFunc
-	 * @param {function} bigFunc Big-endian
-	 * @param {number} size Size of integer type.
-	 * @param {number} count Amount of integers to read.
-	 * @param {number} [endian] Call-specific endian.
-	 * @returns {number|Array}
-	 * @private
-	 */
-	_readInteger(littleFunc, bigFunc, size, count, endian) {
-		endian = endian || this._endian;
-		return this._read(endian === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, size, count);
-	}
-
-	/**
-	 * Read a type of data from the internal buffer.
-	 * @param {function} func Reference to a buffer read function.
-	 * @param {number} size Size of the data type.
+	 * @param {number} type Type of integer to read.
 	 * @param {number} [count] Amount to read.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @returns {number|Array}
 	 * @private
 	 */
-	_read(func, size, count) {
+	_readInt(type, count, endian) {
 		let out;
+		let size = TYPE_SIZES[type];
+		let func = READ_FUNCTION_SET[this._internalType][endian || this._endian][type];
+
 		count = count || 1;
+
 		if (count > 1) {
 			out = [];
 			for (let i = 0; i < count; i++) {
-				out[i] = func.call(this._buffer, this._offset);
+				out[i] = func(this._buffer, this._offset);
 				this._offset += size;
 			}
 		} else {
-			out = func.call(this._buffer, this._offset);
+			out = func(this._buffer, this._offset);
 			this._offset += size;
 		}
 		return out;
 	}
 
 	/**
-	 * Write an integer to the internal buffer.
-	 * @param {function} littleFunc
-	 * @param {function} bigFunc
-	 * @param {number|Array} input
-	 * @param {number} size
-	 * @param {number} [endian]
-	 * @private
-	 */
-	_writeInteger(littleFunc, bigFunc, input, size, endian) {
-		endian = endian || this._endian;
-		this._write(endian === Bufo.ENDIAN_LITTLE ? littleFunc : bigFunc, input, size);
-	}
-
-	/**
 	 * Write a type of data to the internal buffer.
-	 * @param {function} func Reference to the buffer write function.
+	 * @param {number} type Type of integer to write.
 	 * @param {number|Array} input Input to be written.
-	 * @param {number} size Byte size of the data-type.
+	 * @param {number} [endian] Non-default endian to use.
 	 * @private
 	 */
-	_write(func, input, size) {
+	_writeInt(type, input, endian) {
+		let size = TYPE_SIZES[type];
+		let func = WRITE_FUNCTION_SET[this._internalType][endian || this._endian][type];
+
 		if (Array.isArray(input)) {
 			for (let elem of input) {
-				func.call(this._buffer, elem, this._offset);
+				func(this._buffer, this._offset, elem);
 				this._offset += size;
 			}
 		} else {
-			func.call(this._buffer, input, this._offset);
+			func(this._buffer, this._offset, input);
 			this._offset += size;
 		}
 
@@ -488,41 +584,41 @@ class Bufo {
 		// If provided with a number, create a new buffer with that size.
 		if (typeof input === 'number') {
 			if (NODE_BUFFER_SUPPORT)
-				this._buffer = Buffer.alloc(input);
+				this.raw = Buffer.alloc(input);
 			else if (WEB_BUFFER_SUPPORT)
-				this._buffer = new DataView(new ArrayBuffer(input));
+				this.raw = new DataView(new ArrayBuffer(input));
 
 			return;
 		}
 
 		// NodeJS Buffer, wrap it normally.
 		if (NODE_BUFFER_SUPPORT && input instanceof Buffer) {
-			this._buffer = input;
+			this.raw = input;
 			return;
 		}
 
 		// ArrayBuffer, create a DataView for it.
 		if (WEB_BUFFER_SUPPORT && input instanceof ArrayBuffer) {
-			this._buffer = new DataView(input);
+			this.raw = new DataView(input);
 			return;
 		}
 
 		// DataView, wrap it normally.
 		if (WEB_BUFFER_SUPPORT && input instanceof DataView) {
-			this._buffer = input;
+			this.raw = input;
 		}
 
 		// Weird, but sometimes used to ensure a fresh instance.
 		if (input instanceof Bufo) {
-			this._buffer = input.raw;
+			this.raw = input.raw;
 		}
 
 		// Marshal the array to a supported binary type.
 		if (Array.isArray(input)) {
 			if (NODE_BUFFER_SUPPORT) {
-				this._buffer = Buffer.from(input);
+				this.raw = Buffer.from(input);
 			} else if (WEB_BUFFER_SUPPORT) {
-				this._buffer = new DataView(new ArrayBuffer(input.length));
+				this.raw = new DataView(new ArrayBuffer(input.length));
 				this.writeUInt8(input);
 			}
 		}
@@ -530,9 +626,9 @@ class Bufo {
 		// Not ideal, but handle strings naively.
 		if (typeof input === 'string') {
 			if (NODE_BUFFER_SUPPORT)
-				this._buffer = Buffer.alloc(input.length);
+				this.raw = Buffer.alloc(input.length);
 			else if (WEB_BUFFER_SUPPORT)
-				this._buffer = new DataView(new ArrayBuffer(input.length));
+				this.raw = new DataView(new ArrayBuffer(input.length));
 
 			for (let i = 0; i < input.length; i++)
 				this.writeUInt8(input.charCodeAt(i));
