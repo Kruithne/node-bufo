@@ -606,11 +606,13 @@ class Bufo {
 		// DataView, wrap it normally.
 		if (WEB_BUFFER_SUPPORT && input instanceof DataView) {
 			this.raw = input;
+			return;
 		}
 
 		// Weird, but sometimes used to ensure a fresh instance.
 		if (input instanceof Bufo) {
 			this.raw = input.raw;
+			return;
 		}
 
 		// Marshal the array to a supported binary type.
@@ -621,6 +623,7 @@ class Bufo {
 				this.raw = new DataView(new ArrayBuffer(input.length));
 				this.writeUInt8(input);
 			}
+			return;
 		}
 
 		// Not ideal, but handle strings naively.
