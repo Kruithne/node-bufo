@@ -94,3 +94,30 @@ a.seek(0); check(a.readUInt32(), 6); // Check string length was prefixed.
 a.seek(0); check(a.readString(), "Buzzzz"); // Read length-prefixed string.
 a.seek(0); a.writeUTF8String("こ", true); // Write UTF8 string (length prefixed).
 a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length prefixed).
+
+// ES6 Support //
+{
+	let bytes = [];
+	for (let i = 0; i < 10; i++)
+		bytes.push(Math.floor(Math.random() * 100));
+
+	let buf = new ArrayBuffer(bytes.length);
+	let view = new DataView(buf);
+
+	for (let i = 0; i < bytes.length; i++)
+		view.setUint8(i, bytes[i]);
+
+	// Created using an ArrayBuffer...
+	let data = new Bufo(buf);
+	check(data.byteLength, bytes.length); // data.byteLength should match bytes.length
+
+	for (let i = 0; i < data.byteLength; i++)
+		check(data.readUInt8(), bytes[i]); // All bytes should match.
+
+	// Created using a DataView...
+	data = new Bufo(view);
+	check(data.byteLength, bytes.length); // data.byteLength should match bytes.length
+
+	for (let i = 0; i < data.byteLength; i++)
+		check(data.readUInt8(), bytes[i]); // All bytes should match.
+}
