@@ -1,6 +1,6 @@
 {
   "name": "bufo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Buffer utility for Node v6+",
   "main": "bufo.js",
   "scripts": {
