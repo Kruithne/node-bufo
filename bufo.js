@@ -4,18 +4,18 @@
 	License: MIT
  */
 
-const ENDIAN_LITTLE = 0x1;
-const ENDIAN_BIG = 0x2;
+const ENDIAN_LITTLE = 0x0;
+const ENDIAN_BIG = 0x1;
 
-const TYPE_BUFFER = 0x1;
-const TYPE_WEB = 0x2;
+const TYPE_BUFFER = 0x0;
+const TYPE_WEB = 0x1;
 
-const TYPE_INT8 = 0x1;
-const TYPE_UINT8 = 0x2;
-const TYPE_INT16 = 0x3;
-const TYPE_UINT16 = 0x4;
-const TYPE_INT32 = 0x5;
-const TYPE_UINT32 = 0x6;
+const TYPE_INT8 = 0x0;
+const TYPE_UINT8 = 0x1;
+const TYPE_INT16 = 0x2;
+const TYPE_UINT16 = 0x3;
+const TYPE_INT32 = 0x4;
+const TYPE_UINT32 = 0x5;
 
 const TYPE_SIZES = {
 	[TYPE_INT8]: 1,
