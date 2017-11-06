@@ -598,7 +598,7 @@ class Bufo {
 
 		// Ensure we support at least something.
 		if (!hasNodeSupport && !hasWebSupport)
-			Bufo._error('Cannot instantiate Bufo. No support for Buffer or DataView.');
+			throw new BufoError('Cannot instantiate Bufo. No support for Buffer or DataView.');
 
 		// If provided with a number, create a new buffer with that size.
 		if (typeof input === 'number') {
