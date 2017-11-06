@@ -316,6 +316,9 @@ class Bufo {
 		if (length === undefined || length === null)
 			length = this.readUInt32();
 
+		if (this.remainingBytes < length)
+			throw new BufoError('Not enough data left in buffer to read string. {0} < {1}', this.remainingBytes, length);
+
 		let bytes = this.readUInt8(length);
 		if (length === 1)
 			bytes = [bytes];
