@@ -108,6 +108,22 @@ const WRITE_FUNCTION_SET = {
 	}
 };
 
+/**
+ * Custom error class thrown by Bufo.
+ * @class BufoError
+ */
+class BufoError extends Error {
+	constructor(message, ...args) {
+		message = 'Bufo: ' + message.replace(/{(\d+)}/g, (match, number) => {
+			return typeof args[number] !== 'undefined' ? args[number] : match;
+		});
+
+		super(message);
+		this.stack = (new Error(message)).stack;
+		this.name = this.constructor.name;
+	}
+}
+
 class Bufo {
 	/**
 	 * Create a new Bufo instance.
@@ -198,7 +214,7 @@ class Bufo {
 	 */
 	setEndian(endian) {
 		if (endian !== Bufo.ENDIAN_LITTLE && endian !== Bufo.ENDIAN_BIG)
-			Bufo._error('Invalid endian provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
+			throw new BufoError('Invalid endian provided. Use Bufo.ENDIAN_LITTLE or Bufo.ENDIAN_BIG.');
 
 		this._endian = endian;
 	}
@@ -211,7 +227,7 @@ class Bufo {
 	seek(offset) {
 		let offsetLen = Math.abs(offset);
 		if (offsetLen >= this.byteLength)
-			Bufo._error('seek() offset out of bounds ({0} > {1})', offset, this.byteLength);
+			throw new BufoError('seek() offset out of bounds ({0} > {1})', offset, this.byteLength);
 
 		if (offset < 0)
 			this._offset = this.byteLength - offsetLen;
@@ -227,7 +243,7 @@ class Bufo {
 	move(offset) {
 		let check = this._offset + offset;
 		if (check < 0 || check >= this.byteLength)
-			Bufo._error('move() offset out of bounds ({0})', check);
+			throw new BufoError('move() offset out of bounds ({0})', check);
 
 		this._offset = check;
 	}
@@ -357,7 +373,7 @@ class Bufo {
 	 */
 	readBuffer(length) {
 		if (typeof Buffer !== 'function')
-			return Bufo._error('readBuffer() called in environment without Buffer support.');
+			throw new BufoError('readBuffer() called in environment without Buffer support.');
 
 		if (length === undefined || length === null)
 			length = this.remainingBytes;
@@ -639,7 +655,7 @@ class Bufo {
 			return;
 		}
 
-		Bufo._error('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
+		throw new BufoError('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
 	}
 
 	/**
@@ -649,7 +665,7 @@ class Bufo {
 	 * @private
 	 */
 	static _error(message, ...args) {
-		throw new Error('Bufo: ' + message.replace(/{(\d+)}/g, (match, number) => {
+		throw new BufoError('Bufo: ' + message.replace(/{(\d+)}/g, (match, number) => {
 			return typeof args[number] !== 'undefined' ? args[number] : match;
 		}));
 	}
