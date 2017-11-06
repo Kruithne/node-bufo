@@ -660,18 +660,6 @@ class Bufo {
 
 		throw new BufoError('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
 	}
-
-	/**
-	 * Static helper for throwing errors from Bufo.
-	 * @param {string} message Error message.
-	 * @param args
-	 * @private
-	 */
-	static _error(message, ...args) {
-		throw new BufoError('Bufo: ' + message.replace(/{(\d+)}/g, (match, number) => {
-			return typeof args[number] !== 'undefined' ? args[number] : match;
-		}));
-	}
 }
 
 // Export to NodeJS.
