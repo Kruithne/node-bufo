@@ -396,6 +396,7 @@ class Bufo {
 	readBufo(length) {
 		let target = new Bufo(length);
 		target.writeUInt8(this.readUInt8(length));
+		target.seek(0);
 		return target;
 	}
 
