@@ -394,6 +394,8 @@ class Bufo {
 	 * @returns {Bufo}
 	 */
 	readBufo(length) {
+		length = length || this.remainingBytes;
+
 		let target = new Bufo(length);
 		target.writeUInt8(this.readUInt8(length));
 		target.seek(0);
