@@ -644,6 +644,7 @@ class Bufo {
 			} else if (hasWebSupport) {
 				this.raw = new DataView(new ArrayBuffer(input.length));
 				this.writeUInt8(input);
+				this.seek(0);
 			}
 			return;
 		}
@@ -657,6 +658,8 @@ class Bufo {
 
 			for (let i = 0; i < input.length; i++)
 				this.writeUInt8(input.charCodeAt(i));
+
+			this.seek(0);
 
 			return;
 		}
