@@ -697,7 +697,6 @@ class Bufo {
 				this.writeUInt8(input.charCodeAt(i));
 
 			this.seek(0);
-
 			return;
 		}
 
