@@ -701,7 +701,7 @@ class Bufo {
 			return;
 		}
 
-		throw new BufoError('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer.');
+		throw new BufoError('Unexpected input. Bufo accepts Buffer|Array|Bufo|String|DataView|ArrayBuffer|number.');
 	}
 }
 
