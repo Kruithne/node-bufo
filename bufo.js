@@ -388,6 +388,29 @@ class Bufo {
 	}
 
 	/**
+	 * Read an ArrayBuffer from this buffer.
+	 * If length is omitted, will read all remaining bytes into the ArrayBuffer.
+	 * @param {number|null} [length]
+	 * @returns {ArrayBuffer}
+	 */
+	readArrayBuffer(length) {
+		if (typeof ArrayBuffer !== 'function')
+			throw new BufoError('readArrayBuffer() called in environment without ArrayBuffer support.');
+
+		if (length === undefined || length === null)
+			length = this.remainingBytes;
+
+		let buffer = new ArrayBuffer(length);
+		let view = new DataView(buffer, 0, length);
+
+		for (let byte of this.readUInt8(length))
+			view.setUint8(byte);
+
+		this._offset += length;
+		return buffer;
+	}
+
+	/**
 	 * Read a Bufo-wrapped buffer from this buffer.
 	 * If length is omitted, will read all remaining bytes into the buffer.
 	 * @param {number} [length]
@@ -524,6 +547,20 @@ class Bufo {
 
 		buffer.copy(this._buffer, this._offset, offset, offset + count);
 		this._offset += count;
+		this._writeOffset = this._offset;
+	}
+
+	/**
+	 * Write the contents of an ArrayBuffer to this buffer.
+	 * @param {ArrayBuffer} buffer
+	 * @param {number} [offset] Defaults to 0.
+	 * @param {number} [count] Defaults to all available bytes.
+	 */
+	writeArrayBuffer(buffer, offset, count) {
+		let view = new DataView(buffer, offset || 0, count || buffer.byteLength);
+		for (let i = 0; i < count; i++)
+			this.writeUInt8(view.getUint8(i));
+
 		this._writeOffset = this._offset;
 	}
 

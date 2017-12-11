@@ -168,6 +168,13 @@ Parameter | Type | Info
 --------- | ---- | ----
 length *(optional)* | `number` | How many bytes to read.
 
+### `readArrayBuffer(length)`
+Reads `length` bytes from the buffer, writes them to a newly allocated ArrayBuffer, and returns it. If `length` is omitted, `remainingBytes` will be used.
+
+Parameter | Type | Info
+--------- | ---- | ----
+length *(optional)* | `number` | How many bytes to read.
+
 ### `readBufo(length)`
 Reads and returns a buffer, wrapped in a new Bufo instance. Check `readBuffer` documentation for details.
 
@@ -239,6 +246,15 @@ Writes a buffer (or Bufo instance) to the buffer. If `offset` is omitted, it wil
 Parameter | Type | Info
 --------- | ---- | ----
 buffer | `Buffer\|Bufo` | Buffer to read from.
+offset *(optional)* | `number` | Offset to start reading from.
+count *(optional)* | `number` | How many bytes to read.
+
+### `writeArrayBuffer(buffer, offset, count)`
+Writes the contents of an ArrayBuffer to the buffer. If `offset` is omitted, it will default to `0`. If `count` is omitted, it will default to the `byteLength` property of the provided ArrayBuffer instance.
+
+Parameter | Type | Info
+--------- | ---- | ----
+buffer | `ArrayBuffer` | ArrayBuffer instance to read from.
 offset *(optional)* | `number` | Offset to start reading from.
 count *(optional)* | `number` | How many bytes to read.
 
