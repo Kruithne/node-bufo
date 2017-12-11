@@ -407,7 +407,6 @@ class Bufo {
 		for (let i = 0; i < length; i++)
 			view.setUint8(i, bytes[i]);
 
-		this._offset += length;
 		return buffer;
 	}
 
