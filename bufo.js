@@ -560,8 +560,6 @@ class Bufo {
 		let view = new DataView(buffer, offset || 0, count || buffer.byteLength);
 		for (let i = 0; i < count; i++)
 			this.writeUInt8(view.getUint8(i));
-
-		this._writeOffset = this._offset;
 	}
 
 	/**
