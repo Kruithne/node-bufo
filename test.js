@@ -121,3 +121,40 @@ a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length pr
 	for (let i = 0; i < data.byteLength; i++)
 		check(data.readUInt8(), bytes[i]); // All bytes should match.
 }
+
+// ArrayBuffer reading/writing (1.1.3) //
+{
+	// Create some random data..
+	let nBytes = 20;
+	let bytes = [];
+	for (let i = 0; i < nBytes; i++)
+		bytes[i] = Math.floor(Math.random() * 100);
+
+	// Construct a new ArrayBuffer..
+	let buf = new ArrayBuffer(nBytes);
+	let view = new DataView(buf, 0, nBytes);
+
+	// Write the random data into the ArrayBuffer..
+	for (let i = 0 ; i < nBytes; i++)
+		view.setUint8(i, bytes[i]);
+
+	// Create a Bufo, and attempt to write the ArrayBuffer..
+	let data = new Bufo(nBytes);
+	data.writeArrayBuffer(buf);
+
+	check(data.remainingBytes, 0); // There should be no space left.
+	check(data.byteLength, nBytes); // Data size should match our original.
+	check(data.lastWriteOffset, nBytes); // Write offset should match our size.
+
+	data.seek(0);
+	for (let byte of bytes)
+		check(data.readUInt8(), byte); // All data should match.
+
+	data.seek(0);
+	let read = data.readArrayBuffer();
+	check(read instanceof ArrayBuffer, true);
+
+	let readView = new DataView(read, 0, nBytes);
+	for (let i = 0; i < nBytes; i++)
+		check(readView.getInt8(i), bytes[i]); // All bytes should match.
+}
