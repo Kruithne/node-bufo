@@ -403,8 +403,9 @@ class Bufo {
 		let buffer = new ArrayBuffer(length);
 		let view = new DataView(buffer, 0, length);
 
-		for (let byte of this.readUInt8(length))
-			view.setUint8(byte);
+		let bytes = this.readUInt8(length);
+		for (let i = 0; i < length; i++)
+			view.setUint8(i, bytes[i]);
 
 		this._offset += length;
 		return buffer;
