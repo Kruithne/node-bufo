@@ -557,7 +557,8 @@ class Bufo {
 	 * @param {number} [count] Defaults to all available bytes.
 	 */
 	writeArrayBuffer(buffer, offset, count) {
-		let view = new DataView(buffer, offset || 0, count || buffer.byteLength);
+		count = count || buffer.byteLength;
+		let view = new DataView(buffer, offset || 0, count);
 		for (let i = 0; i < count; i++)
 			this.writeUInt8(view.getUint8(i));
 	}
