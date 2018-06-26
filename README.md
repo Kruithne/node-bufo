@@ -178,6 +178,14 @@ length *(optional)* | `number` | How many bytes to read.
 ### `readBufo(length)`
 Reads and returns a buffer, wrapped in a new Bufo instance. Check `readBuffer` documentation for details.
 
+### `readUntilByte(byte, [preserveStopByte])`
+Reads bytes from the buffer until `byte` is reached. An array containing all bytes before the `byte` will be returned. If `preserveStopByte` is true, it will be included in the output. After this method, the internal offset will always be after the `byte`, never before it.
+
+Parameter | Type | Info
+--------- | ---- | ----
+byte | `number\|string` | Byte character to read until.
+preserveStopByte *(optional)* | `boolean` | Include stop byte in output if true.
+
 ### `writeInt8(input)`
 Write one or more signed 8-bit integers to the buffer.
 

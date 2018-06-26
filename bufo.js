@@ -323,10 +323,7 @@ class Bufo {
 		if (length === 1)
 			bytes = [bytes];
 
-		for (let i = 0; i < bytes.length; i++)
-			bytes[i] = String.fromCharCode(bytes[i]);
-
-		return bytes.join('');
+		return Bufo.bytesToString(bytes);
 	}
 
 	/**
@@ -431,6 +428,34 @@ class Bufo {
 		target.writeUInt8(this.readUInt8(length));
 		target.seek(0);
 		return target;
+	}
+
+	/**
+	 * Read all bytes until a specific byte is reached.
+	 * Reading will stop if the stream hits the end.
+	 * @param {number|string} byte Byte or character.
+	 * @param {boolean} [preserveStopByte] If true, the given byte will be included in the output.
+	 */
+	readUntilByte(byte, preserveStopByte) {
+		if (typeof byte === 'string')
+			byte = byte.charCodeAt(0);
+
+		let bytes = [];
+		let length = this.remainingBytes;
+		for (let i = 0; i < length; i++) {
+			let next = this.readUInt8();
+
+			if (next === byte) {
+				if (preserveStopByte)
+					bytes.push(next);
+
+				break;
+			}
+
+			bytes.push(next);
+		}
+
+		return bytes;
 	}
 
 	/**
@@ -580,6 +605,19 @@ class Bufo {
 	toFile(path, count, options) {
 		let stream = require('fs').createWriteStream(path, options);
 		stream.write(this.readBuffer(count));
+	}
+
+	/**
+	 * Convert an array of bytes into a string.
+	 * @param {Array} bytes
+	 * @return {string}
+	 */
+	static bytesToString(bytes) {
+		let converted = [];
+		for (let i = 0; i < bytes.length; i++)
+			converted[i] = String.fromCharCode(bytes[i]);
+
+		return converted.join('');
 	}
 
 	/**

@@ -178,3 +178,18 @@ a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length pr
 	for (let i = 0; i < nBytes; i++)
 		check(readView.getInt8(i), bytes[i]); // All bytes should match.
 }
+
+// readUntilByte() function (1.1.6)
+{
+	let delim = 0x2C;
+	let data = 'Chris,Sam,Jeff';
+	let buf = new Bufo(data);
+
+	check(buf.readString(data.length), data);
+	buf.seek(0);
+
+	check(Bufo.bytesToString(buf.readUntilByte(delim, false)), 'Chris');
+	check(Bufo.bytesToString(buf.readUntilByte(delim, true)), 'Sam,');
+
+	check(Bufo.bytesToString(buf.readUntilByte(delim, false)), 'Jeff');
+}
