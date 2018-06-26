@@ -47,6 +47,13 @@ Static constant representing the little-endian byte-order. Can be provided to th
 ### `Bufo.ENDIAN_BIG`
 Static constant representing the big-endian byte-order. Can be provided to the constructor to set the default endianness, or to individual integer read/write calls to over-write the default endianness for that call.
 
+### `Bufo.bytesToString(bytes)`
+Convert an array of bytes into a string (without encoding).
+
+Parameter | Type | Info
+--------- | ---- | ----
+bytes | `array` | Array of bytes to convert.
+
 ### `new Bufo(buffer, defaultEncoding)`
 Create a new Bufo instance, wrapping the given input. How the input is handled depends on the type, check the table below.
 
