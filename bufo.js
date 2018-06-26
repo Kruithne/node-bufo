@@ -381,8 +381,15 @@ class Bufo {
 		if (length === undefined || length === null)
 			length = this.remainingBytes;
 
-		let buffer = Buffer.alloc(length);
-		this._buffer.copy(buffer, 0, this._offset, this._offset + length);
+		let buffer = Buffer.allocUnsafe(length);
+
+		if (this._internalType === TYPE_BUFFER) {
+			this._buffer.copy(buffer, 0, this._offset, this._offset + length);
+		} else if (this._internalType === TYPE_WEB) {
+			for (let i = 0; i < length; i++)
+				buffer.writeInt8(this.readInt8(), i);
+		}
+
 		this._offset += length;
 		return buffer;
 	}

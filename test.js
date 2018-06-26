@@ -95,6 +95,20 @@ a.seek(0); check(a.readString(), "Buzzzz"); // Read length-prefixed string.
 a.seek(0); a.writeUTF8String("こ", true); // Write UTF8 string (length prefixed).
 a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length prefixed).
 
+// Buffers //
+{
+	let data = [0x48, 0x45, 0x4C, 0x4C, 0x4F];
+	let buf = new Bufo(data);
+
+	let shortBuffer = buf.readBuffer(1);
+	check(shortBuffer.readUInt8(0), data[0]);
+
+	buf.seek(0);
+	let fullBuffer = buf.readBuffer(data.length);
+	for (let i = 0; i < data.length; i++)
+		check(fullBuffer.readUInt8(i), data[i]);
+}
+
 // ES6 Support //
 {
 	let bytes = [];
@@ -120,6 +134,12 @@ a.seek(0); check(a.readUTF8String(), "こ"); // Read UTF8 string back (length pr
 
 	for (let i = 0; i < data.byteLength; i++)
 		check(data.readUInt8(), bytes[i]); // All bytes should match.
+
+	// Attempt to read a buffer while using DataView internally.
+	data.seek(0);
+
+	let buffer = data.readBuffer();
+	check(buffer.length, data.byteLength);
 }
 
 // ArrayBuffer reading/writing (1.1.3) //
