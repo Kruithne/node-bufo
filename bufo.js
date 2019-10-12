@@ -242,7 +242,7 @@ class Bufo {
 	 */
 	move(offset) {
 		let check = this._offset + offset;
-		if (check < 0 || check >= this.byteLength)
+		if (check < 0 || check > this.byteLength)
 			throw new BufoError('move() offset out of bounds ({0})', check);
 
 		this._offset = check;
