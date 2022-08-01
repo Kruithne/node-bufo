@@ -226,7 +226,7 @@ class Bufo {
 	 */
 	seek(offset) {
 		let offsetLen = Math.abs(offset);
-		if (offsetLen >= this.byteLength)
+		if (offsetLen > this.byteLength)
 			throw new BufoError('seek() offset out of bounds ({0} > {1})', offset, this.byteLength);
 
 		if (offset < 0)
